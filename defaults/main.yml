@@ -1,10 +1,35 @@
 ---
-consul_url_prefix: https://dl.bintray.com/mitchellh/consul/
-consul_version: 0.5.0
+consul_version: 0.5.2
+consul_archive: "{{ consul_version }}_linux_amd64.zip"
+consul_download: "https://dl.bintray.com/mitchellh/consul/{{ consul_archive }}"
+consul_archive_sha256: 171cf4074bfca3b1e46112105738985783f19c47f4408377241b868affa9d445
+consul_download_folder: /tmp
+
 consul_user: consul
 consul_group: consul
-consul_home: /usr/local/consul
-consul_config_dir: '{{ consul_home  }}/etc'
-consul_config_file: '{{ consul_config_dir }}/consul.conf'
-consul_bin_dir: /usr/local/bin
-consul_data_dir: /var/lib/consul
+
+consul_home: /opt/consul
+consul_config_dir: /etc/consul.d
+consul_config_file: /etc/consul.conf
+consul_data_dir: "{{ consul_home }}/data"
+
+consul_domain: consul.
+consul_is_ui: false
+consul_ui_server_name: "{{ ansible_fqdn }}"
+consul_is_server: false
+consul_servers: ['127.0.0.1']
+consul_log_level: "INFO"
+consul_rejoin_after_leave: true
+consul_leave_on_terminate: false
+consul_bind_address: "0.0.0.0"
+consul_dynamic_bind: false
+consul_client_address: "127.0.0.1"
+consul_client_address_bind: false
+consul_datacenter: "default"
+consul_disable_remote_exec: true
+
+# Extra variables (default undefined):
+#consul_join_at_start
+#consul_disable_remote_exec
+#consul_node_name
+#consul_bootstrap_expect

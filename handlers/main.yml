@@ -1,2 +1,9 @@
 ---
-# handlers file for ansible-consul
+- name: restart consul
+  sudo: yes
+  action: service name=consul state=restarted
+
+- name: reload systemd
+  sudo: yes
+  command: systemctl daemon-reload
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'

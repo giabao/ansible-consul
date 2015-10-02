@@ -1,3 +1,31 @@
-{"data_dir":"{{ consul_data_dir }}",
- "enable_syslog":true
- }
+{
+ {% if consul_is_ui == true %}
+   "ui_dir": "{{ consul_home }}/dist",
+ {% endif %}
+
+{% if consul_join_at_start is defined and consul_join_at_start %}
+  "start_join": {{ consul_servers|to_nice_json }},
+{% endif %}
+{% if consul_disable_remote_exec is defined and consul_disable_remote_exec %}
+  "disable_remote_exec": {{ "true" if consul_disable_remote_exec else "false" }},
+{% endif %}
+ "domain": "{{ consul_domain }}",
+ "data_dir": "{{ consul_data_dir }}",
+ "log_level": "{{ consul_log_level }}",
+ "enable_syslog":true,
+
+ {% if consul_node_name is defined %}
+   "node_name": "{{ consul_node_name }}",
+ {% endif %}
+
+  "server": {{ "true" if consul_is_server else "false" }},
+
+  "datacenter": "{{ consul_datacenter }}",
+
+  {% if consul_is_server and consul_bootstrap_expect is defined %}
+    "bootstrap_expect": {{ consul_bootstrap_expect }},
+  {% endif %}
+
+  "rejoin_after_leave": {{ "true" if consul_rejoin_after_leave else "false" }},
+  "leave_on_terminate": {{ "true" if consul_leave_on_terminate else "false" }}
+}

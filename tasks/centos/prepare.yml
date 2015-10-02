@@ -1,4 +1,10 @@
 ---
-- yum: state=latest pkg={{ item }}
-  with_flattened:
-     - unzip
+- yum: name=unzip
+
+# see https://groups.google.com/forum/#!topic/consul-tool/r3of4-UZcYQ
+# https://www.digitalocean.com/community/tutorials/an-introduction-to-selinux-on-centos-7-part-3-users
+# TODO enable SELinux
+- name: disable SELinux
+  sudo: yes
+  selinux: state=disabled
+

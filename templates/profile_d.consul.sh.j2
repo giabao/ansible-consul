@@ -1,1 +1,2 @@
-[ -n "$CONSUL_HOME" ] ||  export CONSUL_HOME={{ consul_home }}
+export PATH={{ consul_home }}/bin:${PATH}
+export CONSUL_HOME={{ consul_home }}

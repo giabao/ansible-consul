@@ -1,0 +1,15 @@
+[Unit]
+Description=Consul Agent
+After=network.target
+
+[Service]
+User={{ consul_user }}
+Group={{ consul_group }}
+Environment="GOMAXPROCS=`nproc`"
+ExecStart={{ consul_home }}/bin/consul agent -config-dir {{ consul_config_dir }} -config-file={{ consul_config_file }} -syslog
+ExecReload=/bin/kill -HUP $MAINPI
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

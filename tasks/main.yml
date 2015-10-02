@@ -1,15 +1,41 @@
 ---
 - include: centos/prepare.yml
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_os_family == 'RedHat'
+
 - include: common.yml
-# TODO: this needs to go into centos/postinstall once https://github.com/ansible/ansible/issues/10907 is fixed
-- name: install systemd consul-agent.service
+
+# TODO: this needs to go into centos/7/postinstall once https://github.com/ansible/ansible/issues/10907 is fixed
+- name: copy consul systemd script
+  sudo: yes
   template:
-    src: systemd.consul-agent.j2
-    dest: '{{ consul_config_dir }}/consul-agent.service'
+    src: consul.systemd.j2
+    dest: /etc/systemd/system/consul.service
+    owner: '{{consul_user}}'
+    group: '{{consul_group}}'
+    mode: 0755
+  register: consul_script
+  notify:
+    - reload systemd
+    - restart consul
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'
+
+- name: copy consul init.d script
+  sudo: yes
+  template:
+    src: consul.initd.j2
+    dest: /etc/init.d/consul
     owner: root
     group: root
-    mode: 644
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-- include: centos/postinstall.yml
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+    mode: 0755
+  register: consul_script
+  notify:
+    - restart consul
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6'
+
+- name: ensure consul started
+  sudo: yes
+  service: name=consul state=started enabled=yes
+  when: not consul_script.changed
+
+#- include: centos/postinstall.yml
+#  when: ansible_os_family == 'RedHat'
