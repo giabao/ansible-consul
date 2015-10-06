@@ -1,5 +1,7 @@
 ---
-- yum: name=unzip
+- name: install required packages
+  yum: name=unzip,libselinux-python
+  become: yes
 
 # see https://groups.google.com/forum/#!topic/consul-tool/r3of4-UZcYQ
 # https://www.digitalocean.com/community/tutorials/an-introduction-to-selinux-on-centos-7-part-3-users
