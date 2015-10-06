@@ -1,0 +1,11 @@
+---
+
+- name: consul iptables config
+  become: yes
+  lineinfile: dest=/etc/sysconfig/iptables
+              line="-A INPUT -s {{item}}/32 -j ACCEPT"
+              insertbefore="^COMMIT$"
+  with_items: "{{consul_firewall_sources}}"
+  notify:
+    - reload iptables
+  when: ansible_distribution_major_version == '6'

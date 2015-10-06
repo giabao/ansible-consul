@@ -7,3 +7,5 @@
 - include: centos/postinstall.yml
   when: ansible_os_family == 'RedHat'
 
+- include: firewall.yml
+  when: consul_firewall_sources is defined
