@@ -5,6 +5,6 @@
 # https://www.digitalocean.com/community/tutorials/an-introduction-to-selinux-on-centos-7-part-3-users
 # TODO enable SELinux
 - name: disable SELinux
-  sudo: yes
+  become: yes
   selinux: state=disabled
 

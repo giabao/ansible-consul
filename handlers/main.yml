@@ -1,9 +1,9 @@
 ---
 - name: restart consul
-  sudo: yes
+  become: yes
   action: service name=consul state=restarted
 
 - name: reload systemd
-  sudo: yes
+  become: yes
   command: systemctl daemon-reload
   when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'

@@ -1,16 +1,16 @@
 - name: create consul group
-  sudo: yes
+  become: yes
   group: name={{consul_group}}
 
 - name: create consul user
-  sudo: yes
+  become: yes
   user: >
     name={{consul_user}}
     group={{consul_group}}
     system=yes
 
 - name: create consul directory
-  sudo: yes
+  become: yes
   file: >
     state=directory
     path={{item}}
@@ -39,7 +39,7 @@
   when: check_download.rc != 0
 
 - name: copy and unpack
-  sudo: yes
+  become: yes
   unarchive:
     src: '{{ consul_download_folder }}/{{ consul_archive }}'
     dest: '{{ consul_home }}/bin'
@@ -47,7 +47,7 @@
   when: check_download.rc != 0 or consul_was_downloaded|changed
 
 - name: set ownership
-  sudo: yes
+  become: yes
   file: >
     state=directory
     path={{consul_home}}
@@ -57,7 +57,7 @@
   when: check_download.rc != 0 or consul_was_downloaded|changed
 
 - name: profile hook, to publish consul_home variable and add consul to path
-  sudo: yes
+  become: yes
   template:
      src: profile_d.consul.sh.j2
      dest: /etc/profile.d/consul.sh
@@ -66,7 +66,7 @@
      mode: 0755
 
 - name: consul config file
-  sudo: yes
+  become: yes
   template:
     src: consul.conf.j2
     dest: '{{ consul_config_file }}'
