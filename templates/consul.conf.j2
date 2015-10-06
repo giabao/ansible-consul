@@ -3,8 +3,8 @@
    "ui_dir": "{{ consul_home }}/dist",
  {% endif %}
 
-{% if consul_join_at_start is defined and consul_join_at_start %}
-  "start_join": {{ consul_servers|to_nice_json }},
+{% if consul_start_join is defined %}
+  "start_join": {{ consul_start_join|to_nice_json }},
 {% endif %}
 {% if consul_disable_remote_exec is defined and consul_disable_remote_exec %}
   "disable_remote_exec": {{ "true" if consul_disable_remote_exec else "false" }},

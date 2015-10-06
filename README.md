@@ -38,3 +38,7 @@ Author Information
 Tobias Gerschner
 
 Gia Bao<giabao@sandinh.net> - http://sandinh.com
+
+# Refs
+
++ [consul @ digitalocean](https://www.digitalocean.com/community/tutorials/how-to-configure-consul-in-a-production-environment-on-ubuntu-14-04)
