@@ -19,7 +19,7 @@
  {% endif %}
 
   "server": {{ "true" if consul_is_server else "false" }},
-
+  "bind_addr": "{{ consul_bind_address }}",
   "datacenter": "{{ consul_datacenter }}",
 
   {% if consul_is_server and consul_bootstrap_expect is defined %}
