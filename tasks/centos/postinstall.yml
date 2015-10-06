@@ -1,0 +1,33 @@
+---
+
+- name: copy consul systemd script. https://github.com/ansible/ansible/issues/10907
+  become: yes
+  template:
+    src: consul.systemd.j2
+    dest: /etc/systemd/system/consul.service
+    owner: '{{consul_user}}'
+    group: '{{consul_group}}'
+    mode: 0755
+  register: consul_script
+  notify:
+    - reload systemd
+    - restart consul
+  when: ansible_distribution_major_version == '7'
+
+- name: copy consul init.d script
+  become: yes
+  template:
+    src: consul.initd.j2
+    dest: /etc/init.d/consul
+    owner: root
+    group: root
+    mode: 0755
+  register: consul_script
+  notify:
+    - restart consul
+  when: ansible_distribution_major_version == '6'
+
+- name: ensure consul started
+  become: yes
+  service: name=consul state=started enabled=yes
+  when: not consul_script|changed
