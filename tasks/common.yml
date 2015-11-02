@@ -33,27 +33,27 @@
   get_url:
     url: '{{consul_download}}'
     dest: '{{consul_download_folder}}'
-    sha256sum: '{{consul_archive_sha256}}'
-#    checksum: sha256:{{consul_archive_sha256}}
+    checksum: 'sha256:{{consul_archive_sha256}}'
   register: consul_was_downloaded
   when: check_download.rc != 0
 
-- name: copy and unpack
-  become: yes
-  unarchive:
-    src: '{{ consul_download_folder }}/{{ consul_archive }}'
-    dest: '{{ consul_home }}/bin'
-    copy: no
-  when: check_download.rc != 0 or consul_was_downloaded|changed
+- block:
+  - name: copy and unpack
+    become: yes
+    unarchive:
+      src: '{{ consul_download_folder }}/{{ consul_archive }}'
+      dest: '{{ consul_home }}/bin'
+      copy: no
 
-- name: set ownership
-  become: yes
-  file: >
-    state=directory
-    path={{consul_home}}
-    owner={{consul_user}}
-    group={{consul_group}}
-    recurse=yes
+  - name: set ownership
+    become: yes
+    file: >
+      state=directory
+      path={{consul_home}}
+      owner={{consul_user}}
+      group={{consul_group}}
+      recurse=yes
+
   when: check_download.rc != 0 or consul_was_downloaded|changed
 
 - name: profile hook, to publish consul_home variable and add consul to path
