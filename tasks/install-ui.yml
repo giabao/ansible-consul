@@ -1,0 +1,60 @@
+- name: check if consul_ui_download is cached
+  shell: echo "{{consul_ui_archive_sha256}}  {{consul_download_folder}}/{{consul_ui_archive}}" | sha256sum -c --status
+  register: check_download
+  failed_when: false
+  changed_when: false
+
+- name: download consul ui
+  get_url: >
+    url={{consul_ui_download}}
+    dest={{consul_download_folder}}
+    checksum=sha256:{{consul_ui_archive_sha256}}
+  register: consul_ui_was_downloaded
+  when: check_download.rc != 0
+
+- block:
+  - name: copy and unpack ui
+    become: yes
+    unarchive: >
+      src={{ consul_download_folder }}/{{ consul_ui_archive }}
+      dest={{ consul_home }}
+      copy=no
+
+  - name: set ownership
+    become: yes
+    file: >
+      state=directory
+      path={{consul_ui_dir}}
+      owner={{consul_user}}
+      group={{consul_group}}
+      recurse=yes
+
+  when: check_download.rc != 0 or consul_ui_was_downloaded|changed
+
+- block:
+  - name: htpasswd module requirement
+    become: yes
+    yum: name=python-passlib
+    when: consul_ui_auth_users|length > 0
+
+  - name: consul_ui_auth_file
+    become: yes
+    htpasswd: >
+      path={{consul_ui_auth_file}}
+      name={{item.name}}
+      password={{item.pw}}
+      mode=0640
+      owner=root
+      group={{consul_ui_auth_file_group}}
+    with_items: "{{consul_ui_auth_users}}"
+    when: consul_ui_auth_users|length > 0
+
+  - name: consul nginx config
+    become: yes
+    template:
+      src: consul-nginx.conf.j2
+      dest: /etc/nginx/conf.d/consul-ui.conf
+    notify:
+      - reload nginx
+
+  when: consul_is_ui and consul_ui_config_nginx

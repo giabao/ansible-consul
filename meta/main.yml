@@ -16,4 +16,6 @@ galaxy_info:
   - development
   - monitoring
   - system
-dependencies: []
+dependencies:
+  - { role: ansible-nginx, when: consul_is_ui == true }
+  - { role: ansible-epel, when: consul_is_ui == true and consul_ui_auth_users|length > 0 }

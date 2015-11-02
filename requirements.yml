@@ -1,0 +1,3 @@
+- src: https://github.com/giabao/ansible-nginx
+
+- src: https://github.com/giabao/ansible-epel

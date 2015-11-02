@@ -17,7 +17,17 @@ consul_domain: consul.
 consul_is_server: false
 
 consul_is_ui: false
-consul_ui_server_name: "{{ ansible_fqdn }}"
+consul_ui_server_name: "consul.{{ ansible_fqdn }}"
+consul_ui_archive: "consul_{{ consul_version }}_web_ui.zip"
+consul_ui_archive_sha256: ad883aa52e1c0136ab1492bbcedad1210235f26d59719fb6de3ef6464f1ff3b1
+consul_ui_download: "https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_ui_archive }}"
+consul_ui_dir: "{{ consul_home }}/dist"
+consul_ui_auth_file: /etc/htpasswd/consul
+consul_ui_auth_file_group: nginx
+# { name: 'adm', pw: 'some_plain_password' }
+consul_ui_auth_users: []
+consul_ui_config_nginx: true
+
 consul_log_level: "INFO"
 consul_rejoin_after_leave: true
 consul_leave_on_terminate: false
