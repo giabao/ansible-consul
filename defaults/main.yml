@@ -14,9 +14,10 @@ consul_config_file: /etc/consul.conf
 consul_data_dir: "{{ consul_home }}/data"
 
 consul_domain: consul.
+consul_is_server: false
+
 consul_is_ui: false
 consul_ui_server_name: "{{ ansible_fqdn }}"
-consul_is_server: false
 consul_log_level: "INFO"
 consul_rejoin_after_leave: true
 consul_leave_on_terminate: false
