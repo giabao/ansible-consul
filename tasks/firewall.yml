@@ -9,3 +9,14 @@
   notify:
     - reload iptables
   when: ansible_distribution_major_version == '6'
+
+- name: consul firewalld config
+  become: yes
+  firewalld: >
+    source="{{item}}/32"
+    zone=trusted
+    state=enabled
+    immediate=yes
+    permanent=yes
+  with_items: "{{consul_firewall_sources}}"
+  when: ansible_distribution_major_version == '7'
