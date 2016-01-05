@@ -4,32 +4,35 @@
   failed_when: false
   changed_when: false
 
-- name: download consul ui
-  get_url: >
-    url={{consul_ui_download}}
-    dest={{consul_download_folder}}
-    checksum=sha256:{{consul_ui_archive_sha256}}
-  register: consul_ui_was_downloaded
-  when: check_download.rc != 0
-
 - block:
-  - name: copy and unpack ui
-    become: yes
-    unarchive: >
-      src={{ consul_download_folder }}/{{ consul_ui_archive }}
-      dest={{ consul_ui_dir }}
-      copy=no
+  - name: download consul ui
+    get_url: >
+      url={{consul_ui_download}}
+      dest={{consul_download_folder}}
+      checksum=sha256:{{consul_ui_archive_sha256}}
+    async: 600 #seconds
+    register: consul_ui_was_downloaded
 
-  - name: set ownership
-    become: yes
-    file: >
-      state=directory
-      path={{consul_ui_dir}}
-      owner={{consul_user}}
-      group={{consul_group}}
-      recurse=yes
+  - block:
+    - name: copy and unpack ui
+      become: yes
+      unarchive: >
+        src={{ consul_download_folder }}/{{ consul_ui_archive }}
+        dest={{ consul_ui_dir }}
+        copy=no
 
-  when: check_download.rc != 0 or consul_ui_was_downloaded|changed
+    - name: set ownership
+      become: yes
+      file: >
+        state=directory
+        path={{consul_ui_dir}}
+        owner={{consul_user}}
+        group={{consul_group}}
+        recurse=yes
+
+    when: consul_ui_was_downloaded|changed
+
+  when: check_download.rc != 0
 
 - block:
   - name: htpasswd module requirement
@@ -57,4 +60,4 @@
     notify:
       - reload nginx
 
-  when: consul_is_ui and consul_ui_config_nginx
+  when: consul_ui_config_nginx
