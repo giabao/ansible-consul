@@ -1,8 +1,8 @@
 ---
-consul_version: 0.5.2
-consul_archive: "{{ consul_version }}_linux_amd64.zip"
-consul_download: "https://dl.bintray.com/mitchellh/consul/{{ consul_archive }}"
-consul_archive_sha256: 171cf4074bfca3b1e46112105738985783f19c47f4408377241b868affa9d445
+consul_version: 0.6.0
+consul_archive: "consul_{{ consul_version }}_linux_amd64.zip"
+consul_download: "https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_archive }}"
+consul_archive_sha256: 307fa26ae32cb8732aed2b3320ed8daf02c28b50d952cbaae8faf67c79f78847
 consul_download_folder: /tmp
 
 consul_user: consul
@@ -19,7 +19,7 @@ consul_is_server: false
 consul_is_ui: false
 consul_ui_server_name: "consul.{{ ansible_fqdn }}"
 consul_ui_archive: "consul_{{ consul_version }}_web_ui.zip"
-consul_ui_archive_sha256: ad883aa52e1c0136ab1492bbcedad1210235f26d59719fb6de3ef6464f1ff3b1
+consul_ui_archive_sha256: 73c5e7ee50bb4a2efe56331d330e6d7dbf46335599c028344ccc4031c0c32eb0
 consul_ui_download: "https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_ui_archive }}"
 consul_ui_dir: "{{ consul_home }}/dist"
 consul_ui_auth_file: /etc/htpasswd/consul

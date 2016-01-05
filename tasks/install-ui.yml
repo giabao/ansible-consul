@@ -17,7 +17,7 @@
     become: yes
     unarchive: >
       src={{ consul_download_folder }}/{{ consul_ui_archive }}
-      dest={{ consul_home }}
+      dest={{ consul_ui_dir }}
       copy=no
 
   - name: set ownership
