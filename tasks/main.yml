@@ -10,5 +10,8 @@
 - include: centos/postinstall.yml
   when: ansible_os_family == 'RedHat'
 
+- include: debian/postinstall.yml
+  when: ansible_os_family == 'Debian'
+
 - include: firewall.yml
   when: consul_firewall_sources is defined

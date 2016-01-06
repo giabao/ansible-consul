@@ -1,22 +1,32 @@
 ---
 
-- name: consul iptables config
-  become: yes
-  lineinfile: dest=/etc/sysconfig/iptables
-              line="-A INPUT -s {{item}}/32 -j ACCEPT"
-              insertbefore="^COMMIT$"
-  with_items: "{{consul_firewall_sources}}"
-  notify:
-    - reload iptables
-  when: ansible_distribution_major_version == '6'
+- block:
+  - name: consul iptables config
+    become: yes
+    lineinfile: dest=/etc/sysconfig/iptables
+                line="-A INPUT -s {{item}}/32 -j ACCEPT"
+                insertbefore="^COMMIT$"
+    with_items: "{{consul_firewall_sources}}"
+    notify:
+      - reload iptables
+    when: ansible_distribution_major_version == '6'
 
-- name: consul firewalld config
-  become: yes
-  firewalld: >
-    source="{{item}}/32"
-    zone=trusted
-    state=enabled
-    immediate=yes
-    permanent=yes
-  with_items: "{{consul_firewall_sources}}"
-  when: ansible_distribution_major_version == '7'
+  - name: consul firewalld config
+    become: yes
+    firewalld: >
+      source="{{item}}/32"
+      zone=trusted
+      state=enabled
+      immediate=yes
+      permanent=yes
+    with_items: "{{consul_firewall_sources}}"
+    when: ansible_distribution_major_version == '7'
+
+  when: ansible_os_family == 'RedHat'
+
+- block:
+  - name: consul ufw rules
+    ufw: rule=allow src="{{item}}/32"
+    with_items: "{{consul_firewall_sources}}"
+
+  when: ansible_os_family == 'Debian'
