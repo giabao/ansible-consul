@@ -26,6 +26,7 @@
 
 - block:
   - name: consul ufw rules
+    become: yes
     ufw: rule=allow src="{{item}}/32"
     with_items: "{{consul_firewall_sources}}"
 

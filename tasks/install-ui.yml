@@ -11,6 +11,7 @@
       dest={{consul_download_folder}}
       checksum=sha256:{{consul_ui_archive_sha256}}
     async: 600 #seconds
+    poll: 10 #seconds
     register: consul_ui_was_downloaded
 
   - block:
