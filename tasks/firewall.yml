@@ -1,15 +1,21 @@
 ---
 
+- name: consul iptables config
+  become: yes
+  lineinfile: dest=/etc/sysconfig/iptables
+              line="-A INPUT -s {{item}}/32 -j ACCEPT"
+              insertbefore="^COMMIT$"
+  with_items: "{{consul_firewall_sources}}"
+  notify:
+    - reload iptables
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6'
+
 - block:
-  - name: consul iptables config
-    become: yes
-    lineinfile: dest=/etc/sysconfig/iptables
-                line="-A INPUT -s {{item}}/32 -j ACCEPT"
-                insertbefore="^COMMIT$"
-    with_items: "{{consul_firewall_sources}}"
-    notify:
-      - reload iptables
-    when: ansible_distribution_major_version == '6'
+  - name: systemctl status firewalld
+    shell: "systemctl status firewalld | grep -q 'Active: active (running)'"
+    changed_when: false
+    failed_when: false
+    register: r
 
   - name: consul firewalld config
     become: yes
@@ -20,9 +26,9 @@
       immediate=yes
       permanent=yes
     with_items: "{{consul_firewall_sources}}"
-    when: ansible_distribution_major_version == '7'
+    when: r.rc == 0
 
-  when: ansible_os_family == 'RedHat'
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'
 
 - block:
   - name: consul ufw rules
